@@ -1,0 +1,26 @@
+{
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "copperheimer:blocks/bluestone_dust_dot",
+    "line": "copperheimer:blocks/bluestone_dust_dot",
+    "overlay": "copperheimer:blocks/bluestone_dust_overlay"
+  },
+  "elements": [
+    {   "from": [ 0, 0, 15.75 ],
+      "to": [ 16, 16, 15.75 ],
+      "shade": false,
+      "faces": {
+        "north": { "uv": [ 0, 0, 16, 16], "texture": "#line", "tintindex": 0 },
+        "south": { "uv": [ 0, 0, 16, 16], "texture": "#line", "tintindex": 0 }
+      }
+    },
+    {   "from": [ 0, 0, 15.75 ],
+      "to": [ 16, 16, 15.75 ],
+      "shade": false,
+      "faces": {
+        "north": { "uv": [ 0, 0, 16, 16 ], "texture": "#overlay" },
+        "south": { "uv": [ 0, 0, 16, 16 ], "texture": "#overlay" }
+      }
+    }
+  ]
+}

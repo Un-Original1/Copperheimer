@@ -1,0 +1,220 @@
+{
+
+  "multipart": [
+    {   "when": {
+            "OR": [
+              {"north": "none", "east": "none", "south": "none", "west": "none", "facing" :  "north"},
+              {"north": "side|up", "east": "side|up" , "facing" :  "north"},
+              {"east": "side|up", "south": "side|up", "facing" :  "north" },
+              {"south": "side|up", "west": "side|up", "facing" :  "north"},
+              {"west": "side|up", "north": "side|up", "facing" :  "north"}
+            ]
+          },
+      "apply": { "model": "copperheimer:bluestone_dot_vertical", "y": 0}
+    },
+    {   "when": {
+      "OR": [
+        {"north": "none", "east": "none", "south": "none", "west": "none", "facing" :  "south"},
+        {"north": "side|up", "east": "side|up" , "facing" :  "south"},
+        {"east": "side|up", "south": "side|up", "facing" :  "south" },
+        {"south": "side|up", "west": "side|up", "facing" :  "south"},
+        {"west": "side|up", "north": "side|up", "facing" :  "south"}
+      ]
+    },
+      "apply": { "model": "copperheimer:bluestone_dot_vertical", "y": 180}
+    },
+
+    {   "when": {
+      "OR": [
+        {"north": "none", "east": "none", "south": "none", "west": "none", "facing" :  "east"},
+        {"north": "side|up", "east": "side|up" , "facing" :  "east"},
+        {"east": "side|up", "south": "side|up", "facing" :  "east" },
+        {"south": "side|up", "west": "side|up", "facing" :  "east"},
+        {"west": "side|up", "north": "side|up", "facing" :  "east"}
+      ]
+    },
+      "apply": { "model": "copperheimer:bluestone_dot_vertical", "y": 90}
+    },
+
+    {   "when": {
+      "OR": [
+        {"north": "none", "east": "none", "south": "none", "west": "none", "facing" :  "west"},
+        {"north": "side|up", "east": "side|up" , "facing" :  "west"},
+        {"east": "side|up", "south": "side|up", "facing" :  "west" },
+        {"south": "side|up", "west": "side|up", "facing" :  "west"},
+        {"west": "side|up", "north": "side|up", "facing" :  "west"}
+      ]
+    },
+      "apply": { "model": "copperheimer:bluestone_dot_vertical", "y":270}
+    },
+
+
+
+    {   "when": { "OR": [
+      { "north": "side|up" , "facing" :  "north" },
+      { "north": "none", "east": "none", "south": "side|up", "west": "none", "facing" :  "north"  }
+    ]},
+      "apply": { "model": "copperheimer:bluestone_side0_vertical", "y": 0, "z": 0 }
+    },
+    {   "when": { "OR": [
+      { "north": "side|up" , "facing" :  "south" },
+      { "north": "none", "east": "none", "south": "side|up", "west": "none", "facing" :  "south"  }
+    ]},
+      "apply": { "model": "copperheimer:bluestone_side0_vertical", "y": 180, "z": 180 }
+    },
+    {   "when": { "OR": [
+      { "north": "side|up" , "facing" :  "east" },
+      { "north": "none", "east": "none", "south": "side|up", "west": "none", "facing" :  "east"  }
+    ]},
+      "apply": { "model": "copperheimer:bluestone_side0_vertical", "y": 90, "z": 180 }
+    },
+    {   "when": { "OR": [
+      { "north": "side|up" , "facing" :  "west" },
+      { "north": "none", "east": "none", "south": "side|up", "west": "none", "facing" :  "west"  }
+    ]},
+      "apply": { "model": "copperheimer:bluestone_side0_vertical", "y": 270, "z": 180 }
+    },
+
+
+
+    {   "when": { "OR": [
+      { "south": "side|up", "facing" : "north" },
+      { "north": "side|up", "east": "none", "south": "none", "west": "none","facing" : "north"  }
+    ]},
+      "apply": { "model": "copperheimer:bluestone_side_alt0_vertical", "y": 0, "z": 0 }
+    },
+    {   "when": { "OR": [
+      { "south": "side|up", "facing" : "south" },
+      { "north": "side|up", "east": "none", "south": "none", "west": "none","facing" : "south"  }
+    ]},
+      "apply": { "model": "copperheimer:bluestone_side_alt0_vertical", "y": 180, "z": 180 }
+    },
+    {   "when": { "OR": [
+      { "south": "side|up", "facing" : "east" },
+      { "north": "side|up", "east": "none", "south": "none", "west": "none","facing" : "east"  }
+    ]},
+      "apply": { "model": "copperheimer:bluestone_side_alt0_vertical", "y": 90, "z": 180 }
+    },
+    {   "when": { "OR": [
+      { "south": "side|up", "facing" : "west" },
+      { "north": "side|up", "east": "none", "south": "none", "west": "none","facing" : "west"  }
+    ]},
+      "apply": { "model": "copperheimer:bluestone_side_alt0_vertical", "y": 270, "z": 180 }
+    },
+
+
+
+
+
+
+
+    {   "when": { "OR": [
+      { "east": "side|up" , "facing" : "north" },
+      { "north": "none", "east": "none", "south": "none", "west": "side|up", "facing" : "north"  }
+    ]},
+      "apply": { "model": "copperheimer:bluestone_side_ns","y": 0, "x": 0, "z": 0}
+    },
+    {   "when": { "OR": [
+      { "east": "side|up" , "facing" : "south" },
+      { "north": "none", "east": "none", "south": "none", "west": "side|up", "facing" : "south"  }
+    ]},
+      "apply": { "model": "copperheimer:bluestone_side_alt1_vertical", "y": 180, "x": 270, "z": 90  }
+    },
+    {   "when": { "OR": [
+      { "east": "side|up" , "facing" : "east" },
+      { "north": "none", "east": "none", "south": "none", "west": "side|up", "facing" : "east"  }
+    ]},
+      "apply": { "model": "copperheimer:bluestone_side_alt1_vertical", "y": 90, "x": 270, "z": 90  }
+    },
+    {   "when": { "OR": [
+      { "east": "side|up" , "facing" : "west" },
+      { "north": "none", "east": "none", "south": "none", "west": "side|up", "facing" : "west"  }
+    ]},
+      "apply": { "model": "copperheimer:bluestone_side_alt1_vertical", "y": 270, "x": 270, "z": 90  }
+    },
+
+
+
+    {   "when": { "OR": [
+      { "west": "side|up" , "facing" : "north" },
+      { "north": "none", "east": "side|up", "south": "none", "west": "none" , "facing" : "north" }
+    ]},
+      "apply": { "model": "copperheimer:bluestone_side_ns_alt", "y": 0, "x": 0 }
+    },
+    {   "when": { "OR": [
+      { "west": "side|up" , "facing" : "south" },
+      { "north": "none", "east": "side|up", "south": "none", "west": "none" , "facing" : "south" }
+    ]},
+      "apply": { "model": "copperheimer:bluestone_side1_vertical", "y": 180, "x": 270 }
+    },
+    {   "when": { "OR": [
+      { "west": "side|up" , "facing" : "east" },
+      { "north": "none", "east": "side|up", "south": "none", "west": "none" , "facing" : "east" }
+    ]},
+      "apply": { "model": "copperheimer:bluestone_side1_vertical", "y": 90, "x": 270 }
+    },
+    {   "when": { "OR": [
+      { "west": "side|up" , "facing" : "west" },
+      { "north": "none", "east": "side|up", "south": "none", "west": "none" , "facing" : "west" }
+    ]},
+      "apply": { "model": "copperheimer:bluestone_side1_vertical", "y": 270, "x": 270 }
+    },
+
+
+
+    {   "when": { "north": "up" , "facing" : "north"},
+      "apply": { "model": "copperheimer:bluestone_up" , "y": 0, "x": 90}
+    },
+    {   "when": { "north": "up" , "facing" : "south"},
+      "apply": { "model": "copperheimer:bluestone_up" , "y": 180, "x": 90}
+    },
+    {   "when": { "north": "up" , "facing" : "east"},
+      "apply": { "model": "copperheimer:bluestone_up" , "y": 90, "x": 90}
+    },
+    {   "when": { "north": "up" , "facing" : "west"},
+      "apply": { "model": "copperheimer:bluestone_up" , "y": 270, "x": 90}
+    },
+
+
+    {   "when": { "east": "up", "facing" : "north" },
+      "apply": { "model": "copperheimer:bluestone_up", "y": 90 , "x": 90}
+    },
+    {   "when": { "east": "up", "facing" : "south" },
+      "apply": { "model": "copperheimer:bluestone_up", "y": 270 , "x": 90}
+    },
+    {   "when": { "east": "up", "facing" : "east" },
+      "apply": { "model": "copperheimer:bluestone_up", "y": 180 , "x": 90}
+    },
+    {   "when": { "east": "up", "facing" : "west" },
+      "apply": { "model": "copperheimer:bluestone_up", "y": 0 , "x": 90}
+    },
+
+
+    {   "when": { "south": "up", "facing" : "north" },
+      "apply": { "model": "copperheimer:bluestone_up", "y": 180, "x": 90 }
+    },
+    {   "when": { "south": "up", "facing" : "south" },
+      "apply": { "model": "copperheimer:bluestone_up", "y": 0, "x": 90 }
+    },
+    {   "when": { "south": "up", "facing" : "east" },
+      "apply": { "model": "copperheimer:bluestone_up", "y": 270, "x": 90 }
+    },
+    {   "when": { "south": "up", "facing" : "west" },
+      "apply": { "model": "copperheimer:bluestone_up", "y": 90, "x": 90 }
+    },
+
+
+    {   "when": { "west": "up", "facing" : "north"},
+      "apply": { "model": "copperheimer:bluestone_up", "y": 270,"x": 90 }
+    },
+    {   "when": { "west": "up", "facing" : "south"},
+      "apply": { "model": "copperheimer:bluestone_up", "y": 90,"x": 90 }
+    },
+    {   "when": { "west": "up", "facing" : "east"},
+      "apply": { "model": "copperheimer:bluestone_up", "y": 0,"x": 90 }
+    },
+    {   "when": { "west": "up", "facing" : "west"},
+      "apply": { "model": "copperheimer:bluestone_up", "y": 180,"x": 90 }
+    }
+  ]
+}

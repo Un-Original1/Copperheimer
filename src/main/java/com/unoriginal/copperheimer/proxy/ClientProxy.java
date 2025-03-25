@@ -1,5 +1,8 @@
 package com.unoriginal.copperheimer.proxy;
 
+import com.google.common.collect.Lists;
+import com.unoriginal.copperheimer.blocks.BlockBluestoneDust;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
@@ -8,7 +11,11 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.List;
+
 public class ClientProxy extends CommonProxy{
+
+
     @Override
     public void preInit(FMLPreInitializationEvent e) {
         super.preInit(e);
@@ -22,6 +29,9 @@ public class ClientProxy extends CommonProxy{
     public Object getArmorModel(Item item, EntityLivingBase entity) {
         return null;
     }
+
+
+
 
     @SideOnly(Side.CLIENT)
     @Override

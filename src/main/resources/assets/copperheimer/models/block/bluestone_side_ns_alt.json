@@ -1,0 +1,6 @@
+{
+  "parent": "copperheimer:block/bluestone_side_ns_alt_base",
+  "textures": {
+    "line": "copperheimer:blocks/bluestone_dust_line2"
+  }
+}

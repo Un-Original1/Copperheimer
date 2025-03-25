@@ -1,0 +1,6 @@
+{
+  "parent": "block/redstone_side_alt",
+  "textures": {
+    "line": "copperheimer:blocks/bluestone_dust_line0"
+  }
+}

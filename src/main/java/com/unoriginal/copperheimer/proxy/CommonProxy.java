@@ -5,6 +5,7 @@ import com.unoriginal.copperheimer.init.ModBlocks;
 import com.unoriginal.copperheimer.init.ModEntities;
 import com.unoriginal.copperheimer.init.ModEvents;
 import com.unoriginal.copperheimer.init.ModItems;
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
