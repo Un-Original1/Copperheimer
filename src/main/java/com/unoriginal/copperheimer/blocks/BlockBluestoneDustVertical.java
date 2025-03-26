@@ -234,10 +234,10 @@ public class BlockBluestoneDustVertical extends Block {
 
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
     {
-        state = state.withProperty(RIGHT, this.getAttachPosition(state, worldIn, pos, CalculateOffset(EnumFacing.WEST, state)));
-        state = state.withProperty(LEFT, this.getAttachPosition(state, worldIn, pos,CalculateOffset(EnumFacing.EAST, state)));
-        state = state.withProperty(UP, this.getAttachPosition(state, worldIn, pos,CalculateOffset(EnumFacing.NORTH, state)));
-        state = state.withProperty(DOWN, this.getAttachPosition(state, worldIn, pos, CalculateOffset(EnumFacing.SOUTH, state)));
+        state = state.withProperty(RIGHT, this.getAttachPosition(state, worldIn, pos, CalculateOffset(EnumFacing.WEST, worldIn.getBlockState(pos))));
+        state = state.withProperty(LEFT, this.getAttachPosition(state, worldIn, pos,CalculateOffset(EnumFacing.EAST,  worldIn.getBlockState(pos))));
+        state = state.withProperty(UP, this.getAttachPosition(state, worldIn, pos,CalculateOffset(EnumFacing.NORTH,  worldIn.getBlockState(pos))));
+        state = state.withProperty(DOWN, this.getAttachPosition(state, worldIn, pos, CalculateOffset(EnumFacing.SOUTH, worldIn.getBlockState(pos))));
         return state;
     }
 
@@ -248,63 +248,67 @@ public class BlockBluestoneDustVertical extends Block {
             case WEST:
                 switch (basic){
                     case SOUTH:
-                        result = EnumFacing.WEST;
+                        result = EnumFacing.NORTH;
                         break;
                     case EAST:
-                        result =  EnumFacing.UP;
-                       break;
-                    case NORTH:
-                        result =  EnumFacing.EAST;
-                       break;
-                    case WEST:
                         result =  EnumFacing.DOWN;
                        break;
+                    case NORTH:
+                        result =  EnumFacing.SOUTH;
+                       break;
+                    case WEST:
+                        result =  EnumFacing.UP;
+                       break;
                 }
+                break;
             case EAST:
-                switch (facing){
+                switch (basic){
                     case SOUTH:
-                        result = EnumFacing.EAST;
+                        result = EnumFacing.SOUTH;
                     break;
                     case EAST:
-                        result = EnumFacing.UP;
+                        result = EnumFacing.DOWN;
                     break;
                     case NORTH:
-                        result = EnumFacing.WEST;
+                        result = EnumFacing.NORTH;
                     break;
                     case WEST:
-                        result =  EnumFacing.DOWN;
+                        result =  EnumFacing.UP;
                     break;
                 }
+                break;
             case NORTH:
-                switch (facing){
+                switch (basic){
                     case SOUTH:
                         result =  EnumFacing.DOWN;
                     break;
                     case EAST:
-                        result =  EnumFacing.EAST;
+                        result =  EnumFacing.WEST;
                     break;
                     case NORTH:
                         result =  EnumFacing.UP;
                     break;
                     case WEST:
-                        result =  EnumFacing.WEST;
+                        result =  EnumFacing.EAST;
                     break;
                 }
+                break;
             case SOUTH:
-                switch (facing){
+                switch (basic){
                     case SOUTH:
                         result =  EnumFacing.DOWN;
                     break;
                     case EAST:
-                        result =  EnumFacing.WEST;
+                        result =  EnumFacing.EAST;
                     break;
                     case NORTH:
                         result =  EnumFacing.UP;
                     break;
                     case WEST:
-                        result =  EnumFacing.EAST;
+                        result =  EnumFacing.WEST;
                     break;
                 }
+                break;
         }
         return result;
     }
@@ -313,32 +317,44 @@ public class BlockBluestoneDustVertical extends Block {
     {
         BlockPos blockpos = pos.offset(direction);
         IBlockState iblockstate = worldIn.getBlockState(pos.offset(direction));
-
-        if (!canConnectTo(worldIn.getBlockState(blockpos), direction, worldIn, blockpos) && (iblockstate.isNormalCube()/* || !canConnectUpwardsTo(worldIn, blockpos.down())*/))
+        EnumFacing facing = worldIn.getBlockState(pos).getValue(FACING);
+        //TODO This part needs proper fixing 3rd statement works if put in 2nd
+        //seems like a bug, debug the 3rd statement and find the root cause
+        if (!canConnectTo(worldIn.getBlockState(blockpos), direction, worldIn, blockpos) && (iblockstate.isNormalCube() || !canConnectUpwardsTo(worldIn, blockpos.down()) ) &&  (iblockstate.isNormalCube() || !canConnectUpwardsToVerticalDust(worldIn, blockpos.down().offset(facing), facing)))
         {
-            IBlockState iblockstate1 = worldIn.getBlockState(pos.up());
+            IBlockState iblockstate1 = worldIn.getBlockState(pos.offset(direction).up());
 
-          /*  if (!iblockstate1.isNormalCube())
-            {
-                boolean flag = worldIn.getBlockState(blockpos).isSideSolid(worldIn, blockpos, EnumFacing.UP) || worldIn.getBlockState(blockpos).getBlock() == Blocks.GLOWSTONE;
+            if (!iblockstate1.isNormalCube())
+           {
+                boolean flag = worldIn.getBlockState(blockpos).isSideSolid(worldIn, blockpos, direction) || worldIn.getBlockState(blockpos).getBlock() == Blocks.GLOWSTONE;
 
-                if (flag && canConnectUpwardsTo(worldIn, blockpos.up()))
-                {
-                    if (iblockstate.isBlockNormalCube()/* || iblockstate.getBlock() == ModBlocks.BLUESTONE_VERTICAL)
-                    {
+
+
+               if (flag && canConnectUpwardsTo(worldIn, blockpos.up()))
+               {
+                    if (iblockstate.isBlockNormalCube()) {
                         return BlockBluestoneDustVertical.EnumAttachPosition.UP;
                     }
 
                     return BlockBluestoneDustVertical.EnumAttachPosition.SIDE;
-                }
-            }*/
 
-            return BlockBluestoneDustVertical.EnumAttachPosition.NONE;
+                }
+
+               if (flag && canConnectUpwardsToVerticalDust(worldIn, blockpos.offset(facing), facing)) {
+
+                    return BlockBluestoneDustVertical.EnumAttachPosition.UP;
+               }
+               else {
+                    return BlockBluestoneDustVertical.EnumAttachPosition.NONE;
+               }
+            }
+            return EnumAttachPosition.NONE;
+
         }
         else
         {
-            return BlockBluestoneDustVertical.EnumAttachPosition.SIDE;
 
+                return BlockBluestoneDustVertical.EnumAttachPosition.SIDE;
         }
     }
 
@@ -445,11 +461,16 @@ public class BlockBluestoneDustVertical extends Block {
     {
         return Item.getItemFromBlock(ModBlocks.BLUESTONE_DUST);
     }
-  /*  protected static boolean canConnectUpwardsTo(IBlockAccess worldIn, BlockPos pos)
+    protected static boolean canConnectUpwardsTo(IBlockAccess worldIn, BlockPos pos)
     {
         return canConnectTo(worldIn.getBlockState(pos), null, worldIn, pos);
-    }*/
-
+    }
+    protected static boolean canConnectUpwardsToVerticalDust(IBlockAccess worldIn, BlockPos pos , @Nullable EnumFacing side)
+    {
+        return canConnectTo(worldIn.getBlockState(pos), side, worldIn, pos);
+    }
+    //whi is it only detecting up????
+    //TODO we should try to first get it working on a single direction (north), I believe this can be somehow "forced" to work, need to log every single detection and what it detects so I can find how & why it is detecting incorrectly
     protected static boolean canConnectTo(IBlockState blockState, @Nullable EnumFacing side, IBlockAccess world, BlockPos pos)
     {
         Block block = blockState.getBlock();
@@ -460,7 +481,9 @@ public class BlockBluestoneDustVertical extends Block {
         }
         else if (block == ModBlocks.BLUESTONE_VERTICAL){
             EnumFacing facing = blockState.getValue(BlockBluestoneDustVertical.FACING);
-            return facing == side || facing.getOpposite() == side;
+            IBlockState us = world.getBlockState(pos);
+            EnumFacing usfacing = us.getValue(FACING);
+            return facing == usfacing/* || facing.getOpposite() == side*/;
         }
      /*   else if (Blocks.UNPOWERED_REPEATER.isSameDiode(blockState))
         {

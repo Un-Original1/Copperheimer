@@ -24,7 +24,7 @@ public class Copperheimer
 
     @Mod.Instance
     public static Copperheimer instance;
-    private static Logger logger;
+    public static Logger logger;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)

@@ -115,6 +115,10 @@ public class BlockBluestoneDust extends Block {
 
                     return BlockBluestoneDust.EnumAttachPosition.SIDE;
                 }
+
+                if(canConnectUpwardsToVerticalDust(worldIn, pos.up(),direction) ){
+                    return EnumAttachPosition.UP;
+                }
             }
 
             return BlockBluestoneDust.EnumAttachPosition.NONE;
@@ -435,13 +439,22 @@ public class BlockBluestoneDust extends Block {
         return canConnectTo(worldIn.getBlockState(pos), null, worldIn, pos);
     }
 
+    protected static boolean canConnectUpwardsToVerticalDust(IBlockAccess worldIn, BlockPos pos , @Nullable EnumFacing side)
+    {
+        return canConnectTo(worldIn.getBlockState(pos), side, worldIn, pos);
+    }
+
     protected static boolean canConnectTo(IBlockState blockState, @Nullable EnumFacing side, IBlockAccess world, BlockPos pos)
     {
         Block block = blockState.getBlock();
 
-        if (block == ModBlocks.BLUESTONE_DUST || block == ModBlocks.BLUESTONE_VERTICAL)
+        if (block == ModBlocks.BLUESTONE_DUST)
         {
             return true;
+        }
+        else if(block == ModBlocks.BLUESTONE_VERTICAL){
+            EnumFacing enumFacing = (EnumFacing)blockState.getValue(BlockBluestoneDustVertical.FACING);
+            return enumFacing.getOpposite() == side;
         }
      /*   else if (Blocks.UNPOWERED_REPEATER.isSameDiode(blockState))
         {
