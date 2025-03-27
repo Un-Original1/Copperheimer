@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import com.unoriginal.copperheimer.Copperheimer;
 
 import com.unoriginal.copperheimer.init.ModBlocks;
+import com.unoriginal.copperheimer.init.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -318,10 +319,12 @@ public class BlockBluestoneDustVertical extends Block {
         BlockPos blockpos = pos.offset(direction);
         IBlockState iblockstate = worldIn.getBlockState(pos.offset(direction));
         EnumFacing facing = worldIn.getBlockState(pos).getValue(FACING);
-        //TODO This part needs proper fixing 3rd statement works if put in 2nd
-        //seems like a bug, debug the 3rd statement and find the root cause
-        if (!canConnectTo(worldIn.getBlockState(blockpos), direction, worldIn, blockpos) && (iblockstate.isNormalCube() || !canConnectUpwardsTo(worldIn, blockpos.down()) ) &&  (iblockstate.isNormalCube() || !canConnectUpwardsToVerticalDust(worldIn, blockpos.down().offset(facing), facing)))
+
+        if (!canConnectTo(worldIn.getBlockState(blockpos), direction, worldIn, blockpos) && (iblockstate.isNormalCube() || (!canConnectUpwardsTo(worldIn, blockpos.offset(facing.getOpposite())) || !canConnectUpwardsToVerticalDust(worldIn, blockpos.offset(facing.getOpposite()), facing))))
+
         {
+
+
             IBlockState iblockstate1 = worldIn.getBlockState(pos.offset(direction).up());
 
             if (!iblockstate1.isNormalCube())
@@ -351,11 +354,13 @@ public class BlockBluestoneDustVertical extends Block {
             return EnumAttachPosition.NONE;
 
         }
+
         else
         {
 
                 return BlockBluestoneDustVertical.EnumAttachPosition.SIDE;
         }
+
     }
 
     @Nullable
@@ -459,7 +464,7 @@ public class BlockBluestoneDustVertical extends Block {
 
     public Item getItemDropped(IBlockState state, Random rand, int fortune)
     {
-        return Item.getItemFromBlock(ModBlocks.BLUESTONE_DUST);
+        return ModItems.BLUESTONE;
     }
     protected static boolean canConnectUpwardsTo(IBlockAccess worldIn, BlockPos pos)
     {
@@ -502,7 +507,7 @@ public class BlockBluestoneDustVertical extends Block {
 
     public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state)
     {
-        return new ItemStack(ModBlocks.BLUESTONE_DUST);
+        return new ItemStack(ModItems.BLUESTONE);
     }
 
     /*public IBlockState getStateFromMeta(int meta)

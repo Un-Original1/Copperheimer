@@ -2,6 +2,7 @@ package com.unoriginal.copperheimer.blocks;
 
 import com.unoriginal.copperheimer.Copperheimer;
 import com.unoriginal.copperheimer.init.ModBlocks;
+import com.unoriginal.copperheimer.init.ModItems;
 import net.minecraft.block.*;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -98,7 +99,7 @@ public class BlockBluestoneDust extends Block {
         BlockPos blockpos = pos.offset(direction);
         IBlockState iblockstate = worldIn.getBlockState(pos.offset(direction));
 
-        if (!canConnectTo(worldIn.getBlockState(blockpos), direction, worldIn, blockpos) && (iblockstate.isNormalCube() || !canConnectUpwardsTo(worldIn, blockpos.down())))
+        if (!canConnectTo(worldIn.getBlockState(blockpos), direction, worldIn, blockpos) && (iblockstate.isNormalCube() || (!canConnectUpwardsTo(worldIn, blockpos.down()) || !canConnectUpwardsToVerticalDust(worldIn, blockpos.down(), null))))
         {
             IBlockState iblockstate1 = worldIn.getBlockState(pos.up());
 
@@ -106,7 +107,7 @@ public class BlockBluestoneDust extends Block {
             {
                 boolean flag = worldIn.getBlockState(blockpos).isSideSolid(worldIn, blockpos, EnumFacing.UP) || worldIn.getBlockState(blockpos).getBlock() == Blocks.GLOWSTONE;
 
-                if (flag && canConnectUpwardsTo(worldIn, blockpos.up()))
+                if (flag && (canConnectUpwardsTo(worldIn, blockpos.up()) ||canConnectUpwardsToVerticalDust(worldIn, pos.up(),direction)  ))
                 {
                     if (iblockstate.isBlockNormalCube())
                     {
@@ -116,9 +117,12 @@ public class BlockBluestoneDust extends Block {
                     return BlockBluestoneDust.EnumAttachPosition.SIDE;
                 }
 
-                if(canConnectUpwardsToVerticalDust(worldIn, pos.up(),direction) ){
-                    return EnumAttachPosition.UP;
+              /*  if(flag && canConnectUpwardsToVerticalDust(worldIn, pos.up(),direction) ){
+                    return BlockBluestoneDust.EnumAttachPosition.UP;
                 }
+                else {
+                    return BlockBluestoneDust.EnumAttachPosition.NONE;
+                }*/
             }
 
             return BlockBluestoneDust.EnumAttachPosition.NONE;
@@ -355,7 +359,7 @@ public class BlockBluestoneDust extends Block {
 
     public Item getItemDropped(IBlockState state, Random rand, int fortune)
     {
-        return Item.getItemFromBlock(ModBlocks.BLUESTONE_DUST);
+        return ModItems.BLUESTONE;
     }
 
   /*  public int getStrongPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
@@ -444,6 +448,11 @@ public class BlockBluestoneDust extends Block {
         return canConnectTo(worldIn.getBlockState(pos), side, worldIn, pos);
     }
 
+    protected static boolean canConnectDownwardsToVerticalDust(IBlockAccess worldIn, BlockPos pos , @Nullable EnumFacing side)
+    {
+        return canConnectTo(worldIn.getBlockState(pos), null, worldIn, pos);
+    }
+
     protected static boolean canConnectTo(IBlockState blockState, @Nullable EnumFacing side, IBlockAccess world, BlockPos pos)
     {
         Block block = blockState.getBlock();
@@ -453,8 +462,12 @@ public class BlockBluestoneDust extends Block {
             return true;
         }
         else if(block == ModBlocks.BLUESTONE_VERTICAL){
-            EnumFacing enumFacing = (EnumFacing)blockState.getValue(BlockBluestoneDustVertical.FACING);
-            return enumFacing.getOpposite() == side;
+            if(side!= null) {
+                EnumFacing enumFacing = blockState.getValue(BlockBluestoneDustVertical.FACING);
+                return enumFacing.getOpposite() == side;
+            } else {
+                return true;
+            }
         }
      /*   else if (Blocks.UNPOWERED_REPEATER.isSameDiode(blockState))
         {
@@ -526,7 +539,7 @@ public class BlockBluestoneDust extends Block {
 
     public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state)
     {
-        return new ItemStack(ModBlocks.BLUESTONE_DUST);
+        return new ItemStack(ModItems.BLUESTONE);
     }
 
     /*public IBlockState getStateFromMeta(int meta)

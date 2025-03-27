@@ -1,6 +1,7 @@
 package com.unoriginal.copperheimer.init;
 
 import com.unoriginal.copperheimer.Copperheimer;
+import com.unoriginal.copperheimer.items.ItemBluestone;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -14,8 +15,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Mod.EventBusSubscriber
 public class ModItems {
     //public static Item EXAMPLE
+    public static Item BLUESTONE;
     public static void init() {
         //EXAMPLE = new Item()
+        BLUESTONE = new ItemBluestone("bluestone_item");
+
     }
     //TODO CREATE A CUSTOM CREATIVE TAB
     public static Item quickItemRegistry(String name){
@@ -26,11 +30,13 @@ public class ModItems {
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
         //event.getRegistry().registerAll(Example)
+        event.getRegistry().registerAll(BLUESTONE);
     }
     @SubscribeEvent
     public static void registerRenders(ModelRegistryEvent event)
     {
         //register Render(EXAMPLE)
+        registerRender(BLUESTONE);
     }
 
     public static void registerRender(Item item)

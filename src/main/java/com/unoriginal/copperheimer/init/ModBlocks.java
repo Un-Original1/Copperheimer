@@ -32,8 +32,8 @@ public class ModBlocks {
     }
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        event.getRegistry().registerAll(new ItemBlock(BLUESTONE_DUST).setRegistryName(BLUESTONE_DUST.getRegistryName()));
-        event.getRegistry().registerAll(new ItemBlock(BLUESTONE_VERTICAL).setRegistryName(BLUESTONE_VERTICAL.getRegistryName()));
+     //   event.getRegistry().registerAll(new ItemBlock(BLUESTONE_DUST).setRegistryName(BLUESTONE_DUST.getRegistryName()));
+     //   event.getRegistry().registerAll(new ItemBlock(BLUESTONE_VERTICAL).setRegistryName(BLUESTONE_VERTICAL.getRegistryName()));
         //event.getRegistry().registerAll(new ItemBlock(EXAMPLE).setRegistryName(EXAMPLE.getRegistryName()));
     }
 
@@ -41,8 +41,8 @@ public class ModBlocks {
     @SideOnly(Side.CLIENT)
     public static void registerRenders(ModelRegistryEvent event) {
        // registerRender(Item.getItemFromBlock(EXAMPLE));
-        registerRender(Item.getItemFromBlock(BLUESTONE_DUST));
-        registerRender(Item.getItemFromBlock(BLUESTONE_VERTICAL));
+       // registerRender(Item.getItemFromBlock(BLUESTONE_DUST));
+       // registerRender(Item.getItemFromBlock(BLUESTONE_VERTICAL));
     }
 
     public static void registerRender(Item item) {
