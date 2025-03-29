@@ -1,6 +1,10 @@
 package com.unoriginal.copperheimer.blocks;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.unoriginal.copperheimer.Copperheimer;
+import com.unoriginal.copperheimer.blocks.tile.TileEntityBattery;
+import com.unoriginal.copperheimer.blocks.tile.TileEntityBluestone;
 import com.unoriginal.copperheimer.init.ModBlocks;
 import com.unoriginal.copperheimer.init.ModItems;
 import net.minecraft.block.*;
@@ -8,12 +12,14 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -24,30 +30,32 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
-public class BlockBluestoneDust extends Block {
-    public static final PropertyEnum<BlockBluestoneDust.EnumAttachPosition> NORTH = PropertyEnum.<BlockBluestoneDust.EnumAttachPosition>create("north", BlockBluestoneDust.EnumAttachPosition.class);
-    public static final PropertyEnum<BlockBluestoneDust.EnumAttachPosition> EAST = PropertyEnum.<BlockBluestoneDust.EnumAttachPosition>create("east", BlockBluestoneDust.EnumAttachPosition.class);
-    public static final PropertyEnum<BlockBluestoneDust.EnumAttachPosition> SOUTH = PropertyEnum.<BlockBluestoneDust.EnumAttachPosition>create("south", BlockBluestoneDust.EnumAttachPosition.class);
-    public static final PropertyEnum<BlockBluestoneDust.EnumAttachPosition> WEST = PropertyEnum.<BlockBluestoneDust.EnumAttachPosition>create("west", BlockBluestoneDust.EnumAttachPosition.class);
+
+public class BlockBluestoneDust extends Block implements ITileEntityProvider{
+    public static final PropertyEnum<BlockBluestoneDust.EnumAttachPosition> NORTH = PropertyEnum.create("north", BlockBluestoneDust.EnumAttachPosition.class);
+    public static final PropertyEnum<BlockBluestoneDust.EnumAttachPosition> EAST = PropertyEnum.create("east", BlockBluestoneDust.EnumAttachPosition.class);
+    public static final PropertyEnum<BlockBluestoneDust.EnumAttachPosition> SOUTH = PropertyEnum.create("south", BlockBluestoneDust.EnumAttachPosition.class);
+    public static final PropertyEnum<BlockBluestoneDust.EnumAttachPosition> WEST = PropertyEnum.create("west", BlockBluestoneDust.EnumAttachPosition.class);
+    public static final PropertyInteger POWER = PropertyInteger.create("power", 0, 1); //that's right folks, no energy loss!
+    private boolean canProvidePower = true;
+    private final Set<BlockPos> blocksNeedingUpdate = Sets.newHashSet();
     protected static final AxisAlignedBB[] REDSTONE_WIRE_AABB = new AxisAlignedBB[] {new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 1.0D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 1.0D, 0.0625D, 1.0D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D)};
 
-   /* public static final PropertyDirection FACING = PropertyDirection.create("facing", new Predicate<EnumFacing>(){
-        public boolean apply(@Nullable EnumFacing p_apply_1_)
-        {
-            return p_apply_1_ != EnumFacing.DOWN;
-        }
-    });*/
     public BlockBluestoneDust(String name) {
-        super(Material.CIRCUITS, MapColor.BLUE);
+        super(Material.CIRCUITS, MapColor.AIR);
         //this.setHardness(3.0F);
         this.setRegistryName(name);
         this.setUnlocalizedName(name);
         //this.setLightLevel(0.8F);
         this.setCreativeTab(Copperheimer.COPPERTAB);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(NORTH, BlockBluestoneDust.EnumAttachPosition.NONE).withProperty(EAST, BlockBluestoneDust.EnumAttachPosition.NONE).withProperty(SOUTH, BlockBluestoneDust.EnumAttachPosition.NONE).withProperty(WEST, BlockBluestoneDust.EnumAttachPosition.NONE)/*.withProperty(FACING, EnumFacing.UP)*/);
+        this.setDefaultState(this.blockState.getBaseState().withProperty(NORTH, BlockBluestoneDust.EnumAttachPosition.NONE).withProperty(EAST, BlockBluestoneDust.EnumAttachPosition.NONE).withProperty(SOUTH, BlockBluestoneDust.EnumAttachPosition.NONE).withProperty(WEST, BlockBluestoneDust.EnumAttachPosition.NONE).withProperty(POWER, 0));
     }
+
 
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
     {
@@ -117,12 +125,6 @@ public class BlockBluestoneDust extends Block {
                     return BlockBluestoneDust.EnumAttachPosition.SIDE;
                 }
 
-              /*  if(flag && canConnectUpwardsToVerticalDust(worldIn, pos.up(),direction) ){
-                    return BlockBluestoneDust.EnumAttachPosition.UP;
-                }
-                else {
-                    return BlockBluestoneDust.EnumAttachPosition.NONE;
-                }*/
             }
 
             return BlockBluestoneDust.EnumAttachPosition.NONE;
@@ -157,9 +159,8 @@ public class BlockBluestoneDust extends Block {
         return downState.isTopSolid() || downState.getBlockFaceShape(worldIn, pos.down(), EnumFacing.UP) == BlockFaceShape.SOLID || worldIn.getBlockState(pos.down()).getBlock() == Blocks.GLOWSTONE;
     }
 
-   /* private IBlockState updateSurroundingRedstone(World worldIn, BlockPos pos, IBlockState state)
+    private IBlockState updateSurroundingBluestone(World worldIn, BlockPos pos, IBlockState state)
     {
-        state = this.calculateCurrentChanges(worldIn, pos, pos, state);
         List<BlockPos> list = Lists.newArrayList(this.blocksNeedingUpdate);
         this.blocksNeedingUpdate.clear();
 
@@ -169,9 +170,9 @@ public class BlockBluestoneDust extends Block {
         }
 
         return state;
-    }*/
+    }
 
-   /* private IBlockState calculateCurrentChanges(World worldIn, BlockPos pos1, BlockPos pos2, IBlockState state)
+    private IBlockState calculateCurrentChanges(World worldIn, BlockPos pos1, BlockPos pos2, IBlockState state)
     {
         IBlockState iblockstate = state;
         int i = ((Integer)state.getValue(POWER)).intValue();
@@ -179,7 +180,7 @@ public class BlockBluestoneDust extends Block {
         j = this.getMaxCurrentStrength(worldIn, pos2, j);
         this.canProvidePower = false;
         int k = worldIn.isBlockIndirectlyGettingPowered(pos1);
-      //  this.canProvidePower = true;
+        this.canProvidePower = true;
 
         if (k > 0 && k > j - 1)
         {
@@ -195,19 +196,19 @@ public class BlockBluestoneDust extends Block {
 
             if (flag)
             {
-            //    l = this.getMaxCurrentStrength(worldIn, blockpos, l);
+                l = this.getMaxCurrentStrength(worldIn, blockpos, l);
             }
 
             if (worldIn.getBlockState(blockpos).isNormalCube() && !worldIn.getBlockState(pos1.up()).isNormalCube())
             {
                 if (flag && pos1.getY() >= pos2.getY())
                 {
-            //        l = this.getMaxCurrentStrength(worldIn, blockpos.up(), l);
+                    l = this.getMaxCurrentStrength(worldIn, blockpos.up(), l);
                 }
             }
             else if (!worldIn.getBlockState(blockpos).isNormalCube() && flag && pos1.getY() <= pos2.getY())
             {
-          //      l = this.getMaxCurrentStrength(worldIn, blockpos.down(), l);
+                l = this.getMaxCurrentStrength(worldIn, blockpos.down(), l);
             }
         }
 
@@ -231,23 +232,35 @@ public class BlockBluestoneDust extends Block {
 
         if (i != j)
         {
-          //  state = state.withProperty(POWER, Integer.valueOf(j));
+            state = state.withProperty(POWER, Integer.valueOf(j));
 
             if (worldIn.getBlockState(pos1) == iblockstate)
             {
                 worldIn.setBlockState(pos1, state, 2);
             }
 
-         //   this.blocksNeedingUpdate.add(pos1);
+            this.blocksNeedingUpdate.add(pos1);
 
             for (EnumFacing enumfacing1 : EnumFacing.values())
             {
-           //     this.blocksNeedingUpdate.add(pos1.offset(enumfacing1));
+                this.blocksNeedingUpdate.add(pos1.offset(enumfacing1));
             }
         }
 
         return state;
-    }*/
+    }
+    private int getMaxCurrentStrength(World worldIn, BlockPos pos, int strength)
+    {
+        if (worldIn.getBlockState(pos).getBlock() != this)
+        {
+            return strength;
+        }
+        else
+        {
+            int i = ((Integer)worldIn.getBlockState(pos).getValue(POWER)).intValue();
+            return i > strength ? i : strength;
+        }
+    }
 
     private void notifyWireNeighborsOfStateChange(World worldIn, BlockPos pos)
     {
@@ -266,7 +279,7 @@ public class BlockBluestoneDust extends Block {
     {
         if (!worldIn.isRemote)
         {
-           // this.updateSurroundingRedstone(worldIn, pos, state);
+            this.updateSurroundingBluestone(worldIn, pos, state);
 
             for (EnumFacing enumfacing : EnumFacing.Plane.VERTICAL)
             {
@@ -305,10 +318,10 @@ public class BlockBluestoneDust extends Block {
                 worldIn.notifyNeighborsOfStateChange(pos.offset(enumfacing), this, false);
             }
 
-          //  this.updateSurroundingRedstone(worldIn, pos, state);
+            this.updateSurroundingBluestone(worldIn, pos, state);
 
-           /*    for (EnumFacing enumfacing1 : EnumFacing.Plane.HORIZONTAL)
-         {
+               for (EnumFacing enumfacing1 : EnumFacing.Plane.HORIZONTAL)
+            {
                 this.notifyWireNeighborsOfStateChange(worldIn, pos.offset(enumfacing1));
             }
 
@@ -324,30 +337,25 @@ public class BlockBluestoneDust extends Block {
                 {
                     this.notifyWireNeighborsOfStateChange(worldIn, blockpos.down());
                 }
-            }*/
+            }
         }
     }
 
-    /*private int getMaxCurrentStrength(World worldIn, BlockPos pos, int strength)
-    {
-        if (worldIn.getBlockState(pos).getBlock() != this)
-        {
-            return strength;
-        }
-        else
-        {
-            int i = ((Integer)worldIn.getBlockState(pos).getValue(POWER)).intValue();
-            return i > strength ? i : strength;
-        }
-    }*/
 
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
     {
         if (!worldIn.isRemote)
         {
+            TileEntityBluestone bluestone = (TileEntityBluestone) worldIn.getTileEntity(pos);
+            if(bluestone != null){
+                boolean b = bluestone.isPowered();
+                int i = b ?  1 : 0;
+                worldIn.setBlockState(pos, state.withProperty(POWER, i));
+            }
+
             if (this.canPlaceBlockAt(worldIn, pos))
             {
-               // this.updateSurroundingRedstone(worldIn, pos, state);
+                this.updateSurroundingBluestone(worldIn, pos, state);
             }
             else
             {
@@ -357,86 +365,36 @@ public class BlockBluestoneDust extends Block {
         }
     }
 
+    @Override
+    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
+       // worldIn.setBlockToAir(pos);
+       TileEntityBluestone bluestone = (TileEntityBluestone) worldIn.getTileEntity(pos);
+       if(bluestone != null){
+           boolean b = bluestone.isPowered();
+           int i = b ?  1 : 0;
+           worldIn.setBlockState(pos, state.withProperty(POWER, i));
+       }
+    }
+
+    private boolean lightUp(World world, BlockPos pos){
+        IBlockState state = world.getBlockState(pos);
+        Block block = state.getBlock();
+        if(block == this){
+
+            state = state.withProperty(POWER, 1);
+            world.setBlockState(pos, state);
+            //IBlockState state1 = state;
+            world.scheduleUpdate(pos, state.getBlock(), 10);
+            this.updateSurroundingBluestone(world, pos, state);
+            return true;
+        } else
+        return false;
+    }
+
     public Item getItemDropped(IBlockState state, Random rand, int fortune)
     {
         return ModItems.BLUESTONE;
     }
-
-  /*  public int getStrongPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
-    {
-        return !this.canProvidePower ? 0 : blockState.getWeakPower(blockAccess, pos, side);
-    }
-
-    public int getWeakPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
-    {
-        if (!this.canProvidePower)
-        {
-            return 0;
-        }
-        else
-        {
-            int i = ((Integer)blockState.getValue(POWER)).intValue();
-
-            if (i == 0)
-            {
-                return 0;
-            }
-            else if (side == EnumFacing.UP)
-            {
-                return i;
-            }
-            else
-            {
-                EnumSet<EnumFacing> enumset = EnumSet.<EnumFacing>noneOf(EnumFacing.class);
-
-                for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
-                {
-                    if (this.isPowerSourceAt(blockAccess, pos, enumfacing))
-                    {
-                        enumset.add(enumfacing);
-                    }
-                }
-
-                if (side.getAxis().isHorizontal() && enumset.isEmpty())
-                {
-                    return i;
-                }
-                else if (enumset.contains(side) && !enumset.contains(side.rotateYCCW()) && !enumset.contains(side.rotateY()))
-                {
-                    return i;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-        }
-    }*/
-
-   /* private boolean isPowerSourceAt(IBlockAccess worldIn, BlockPos pos, EnumFacing side)
-    {
-        BlockPos blockpos = pos.offset(side);
-        IBlockState iblockstate = worldIn.getBlockState(blockpos);
-        boolean flag = iblockstate.isNormalCube();
-        boolean flag1 = worldIn.getBlockState(pos.up()).isNormalCube();
-
-        if (!flag1 && flag && canConnectUpwardsTo(worldIn, blockpos.up()))
-        {
-            return true;
-        }
-        else if (canConnectTo(iblockstate, side, worldIn, pos))
-        {
-            return true;
-        }
-        else if (iblockstate.getBlock() == Blocks.POWERED_REPEATER && iblockstate.getValue(BlockRedstoneDiode.FACING) == side)
-        {
-            return true;
-        }
-        else
-        {
-            return !flag && canConnectUpwardsTo(worldIn, blockpos.down());
-        }
-    }*/
 
     protected static boolean canConnectUpwardsTo(IBlockAccess worldIn, BlockPos pos)
     {
@@ -446,11 +404,6 @@ public class BlockBluestoneDust extends Block {
     protected static boolean canConnectUpwardsToVerticalDust(IBlockAccess worldIn, BlockPos pos , @Nullable EnumFacing side)
     {
         return canConnectTo(worldIn.getBlockState(pos), side, worldIn, pos);
-    }
-
-    protected static boolean canConnectDownwardsToVerticalDust(IBlockAccess worldIn, BlockPos pos , @Nullable EnumFacing side)
-    {
-        return canConnectTo(worldIn.getBlockState(pos), null, worldIn, pos);
     }
 
     protected static boolean canConnectTo(IBlockState blockState, @Nullable EnumFacing side, IBlockAccess world, BlockPos pos)
@@ -469,25 +422,19 @@ public class BlockBluestoneDust extends Block {
                 return true;
             }
         }
-     /*   else if (Blocks.UNPOWERED_REPEATER.isSameDiode(blockState))
-        {
-            EnumFacing enumfacing = (EnumFacing)blockState.getValue(BlockRedstoneRepeater.FACING);
-            return enumfacing == side || enumfacing.getOpposite() == side;
+        else if(block == ModBlocks.BATTERY){
+            TileEntityBattery battery = (TileEntityBattery) world.getTileEntity(pos);
+            return true;
         }
-        else if (Blocks.OBSERVER == blockState.getBlock())
-        {
-            return side == blockState.getValue(BlockObserver.FACING);
-        }*/
-        else
-        {
-            return false /*blockState.getBlock().canConnectRedstone(blockState, world, pos, side)*/;
+        else {
+            return false;
         }
     }
 
-   /* public boolean canProvidePower(IBlockState state)
+    public boolean canProvidePower(IBlockState state)
     {
         return this.canProvidePower;
-    }*/
+    }
 
     @SideOnly(Side.CLIENT)
     public static int colorMultiplier(int p_176337_0_)
@@ -542,14 +489,9 @@ public class BlockBluestoneDust extends Block {
         return new ItemStack(ModItems.BLUESTONE);
     }
 
-    /*public IBlockState getStateFromMeta(int meta)
-    {
-        return this.getDefaultState()/*.withProperty(POWER, Integer.valueOf(meta));
-    }*/
-
     public IBlockState getStateFromMeta(int meta)
     {
-        return this.getDefaultState();
+        return this.getDefaultState().withProperty(POWER, meta);
     }
 
     @SideOnly(Side.CLIENT)
@@ -557,14 +499,11 @@ public class BlockBluestoneDust extends Block {
     {
         return BlockRenderLayer.CUTOUT;
     }
+
     public int getMetaFromState(IBlockState state)
     {
-        return 0;
+        return state.getValue(POWER);
     }
-  /*  public int getMetaFromState(IBlockState state)
-    {
-        return ((Integer)state.getValue(POWER)).intValue();
-    }*/
 
     public IBlockState withRotation(IBlockState state, Rotation rot)
     {
@@ -596,7 +535,7 @@ public class BlockBluestoneDust extends Block {
 
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, new IProperty[] {NORTH, EAST, SOUTH, WEST});
+        return new BlockStateContainer(this, new IProperty[] {NORTH, EAST, SOUTH, WEST, POWER});
     }
 
     public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face)
@@ -604,7 +543,13 @@ public class BlockBluestoneDust extends Block {
         return BlockFaceShape.UNDEFINED;
     }
 
-    static enum EnumAttachPosition implements IStringSerializable
+    @Nullable
+    @Override
+    public TileEntity createNewTileEntity(World worldIn, int meta) {
+        return new TileEntityBluestone();
+    }
+
+    enum EnumAttachPosition implements IStringSerializable
     {
         UP("up"),
         SIDE("side"),
@@ -612,7 +557,7 @@ public class BlockBluestoneDust extends Block {
 
         private final String name;
 
-        private EnumAttachPosition(String name)
+        EnumAttachPosition(String name)
         {
             this.name = name;
         }

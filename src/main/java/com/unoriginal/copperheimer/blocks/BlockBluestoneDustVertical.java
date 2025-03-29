@@ -43,7 +43,7 @@ public class BlockBluestoneDustVertical extends Block {
         }
     });
     public BlockBluestoneDustVertical(String name) {
-        super(Material.CIRCUITS, MapColor.BLUE);
+        super(Material.CIRCUITS, MapColor.AIR);
         //this.setHardness(3.0F);
         this.setRegistryName(name);
         this.setUnlocalizedName(name);

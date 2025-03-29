@@ -2,6 +2,7 @@ package com.unoriginal.copperheimer.init;
 
 import com.unoriginal.copperheimer.blocks.BlockBluestoneDust;
 import com.unoriginal.copperheimer.blocks.BlockBluestoneDustVertical;
+import com.unoriginal.copperheimer.blocks.BlockEnergyContainer;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -19,27 +20,32 @@ public class ModBlocks {
     //public static Block EXAMPLE;
     public static Block BLUESTONE_DUST;
     public static Block BLUESTONE_VERTICAL;
+    public static Block BATTERY;
+
+
     public static void init(){
 // EXAMPLE = new Block()
         BLUESTONE_DUST = new BlockBluestoneDust("bluestone_dust");
         BLUESTONE_VERTICAL = new BlockBluestoneDustVertical("bluestone_vertical");
+        BATTERY = new BlockEnergyContainer("battery");
     }
     @SubscribeEvent
     public static void registerBlock(RegistryEvent.Register<Block> event) {
         //event.getRegistry.registerAll(EXAMPLE)
         event.getRegistry().registerAll(BLUESTONE_DUST);
         event.getRegistry().registerAll(BLUESTONE_VERTICAL);
+        event.getRegistry().registerAll(BATTERY);
     }
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-     //   event.getRegistry().registerAll(new ItemBlock(BLUESTONE_DUST).setRegistryName(BLUESTONE_DUST.getRegistryName()));
-     //   event.getRegistry().registerAll(new ItemBlock(BLUESTONE_VERTICAL).setRegistryName(BLUESTONE_VERTICAL.getRegistryName()));
         //event.getRegistry().registerAll(new ItemBlock(EXAMPLE).setRegistryName(EXAMPLE.getRegistryName()));
+        event.getRegistry().registerAll(new ItemBlock(BATTERY).setRegistryName(BATTERY.getRegistryName()));
     }
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public static void registerRenders(ModelRegistryEvent event) {
+        registerRender(Item.getItemFromBlock(BATTERY));
        // registerRender(Item.getItemFromBlock(EXAMPLE));
        // registerRender(Item.getItemFromBlock(BLUESTONE_DUST));
        // registerRender(Item.getItemFromBlock(BLUESTONE_VERTICAL));
